@@ -9,6 +9,7 @@ package encoding
 import (
 	"api-soursop/apis"
 	"encoding/base64"
+	"net/url"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -45,7 +46,15 @@ func base64Decoder() apis.App {
 				Status: "error",
 			}
 
-			data := apis.NotEmptyS(c.Query("data", ""), c.Params("data", ""))
+			datas := []string{
+				c.Query("data", ""),
+			}
+
+			if data_q, err := url.QueryUnescape(c.Params("data", "")); err == nil {
+				datas = append(datas, data_q)
+			}
+
+			data := apis.NotEmptyS(datas...)
 
 			if len(data) > 0 {
 
@@ -92,7 +101,15 @@ func base64Encoder() apis.App {
 				Status: apis.ResponseError,
 			}
 
-			data := apis.NotEmptyS(c.Query("data", ""), c.Params("data", ""))
+			datas := []string{
+				c.Query("data", ""),
+			}
+
+			if data_q, err := url.QueryUnescape(c.Params("data", "")); err == nil {
+				datas = append(datas, data_q)
+			}
+
+			data := apis.NotEmptyS(datas...)
 
 			if len(data) > 0 {
 
