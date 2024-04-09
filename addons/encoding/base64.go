@@ -14,6 +14,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+const (
+	errDataRequired = "field `data` is required"
+	errEmptyResult  = "empty result"
+)
+
 func init() {
 	apis.Register(base64Decoder())
 	apis.Register(base64Encoder())
@@ -62,11 +67,11 @@ func base64Decoder() apis.App {
 				if err != nil {
 					resp.Message = err.Error()
 				} else {
-					resp.Status = "success"
+					resp.Status = apis.ResponseSuccess
 					resp.Data = string(decoded)
 				}
 			} else {
-				resp.Message = "Data is required"
+				resp.Message = errDataRequired
 			}
 
 			return c.JSON(resp)
@@ -115,13 +120,13 @@ func base64Encoder() apis.App {
 
 				encoded := base64.StdEncoding.EncodeToString([]byte(data))
 				if len(encoded) <= 0 {
-					resp.Message = "Encoding failed"
+					resp.Message = errEmptyResult
 				} else {
 					resp.Status = apis.ResponseSuccess
 					resp.Data = string(encoded)
 				}
 			} else {
-				resp.Message = "Field `data` is required"
+				resp.Message = errDataRequired
 			}
 
 			return c.JSON(resp)
