@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
 
@@ -18,10 +19,7 @@ var LISTEN = ":3000"
 var API = fiber.New()
 
 func StartAPI() {
-	API.Use(func(c *fiber.Ctx) error {
-		log.Println(c.Method(), c.Path())
-		return c.Next()
-	})
+	API.Use(logger.New(logger.ConfigDefault))
 
 	if err := API.Listen(LISTEN); err != nil {
 		log.Fatal(err)

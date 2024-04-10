@@ -63,16 +63,16 @@ type App struct {
 
 	Example string `json:"example"`
 
-	Execute fiber.Handler `json:"-"`
+	Handler fiber.Handler `json:"-"`
 }
 
 func (a *App) Register(f *fiber.App) error {
 	switch a.Method {
 	case fiber.MethodGet:
-		f.Get(a.Path, a.Execute)
+		f.Get(a.Path, a.Handler)
 
 	case fiber.MethodPost:
-		f.Post(a.Path, a.Execute)
+		f.Post(a.Path, a.Handler)
 
 	default:
 		return fmt.Errorf("method unsupported")

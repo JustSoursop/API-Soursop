@@ -8,6 +8,7 @@ package apis
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,30 +22,36 @@ func init() {
 		Author:      Author{},
 		Description: "",
 		Version:     "",
-		Path:        "/docs",
+		Path:        "/docs/*",
 		Method:      fiber.MethodGet,
 		Params: []Param{
 			{
-				Name:     "app",
+				Name:     "*",
 				Type:     "string",
 				Required: false,
-				Example:  "/b64/encode",
+				Example:  "/base64/encode",
 			},
 		},
 		SuccessCode:  200,
 		ResponseType: "text/plain utf-8",
 		Example:      "docs",
-		Execute: func(c *fiber.Ctx) error {
+		Handler: func(c *fiber.Ctx) error {
 			theapp := []string{}
+			applist := map[string]App{}
 
-			// endpoint := c.Params("app")
-			// if app, ok := GetApp(endpoint); ok {
-			// 	theapp = append(theapp,
-			// 		fmt.Sprintln(app.Method, app.Path, "params", len(app.Params)),
-			// 	)
-			// }
+			endpoint := "/" + c.Params("*", "")
 
-			for p, a := range apps.Apps {
+			if e, err := url.PathUnescape(endpoint); err == nil {
+				endpoint = e
+			}
+
+			if app, ok := GetApp(endpoint); ok {
+				applist[app.Path] = app
+			} else {
+				applist = apps.Apps
+			}
+
+			for p, a := range applist {
 				params := []string{}
 				for _, p := range a.Params {
 					params = append(params, fmt.Sprintf("%s:%s", p.Name, p.Type))

@@ -45,7 +45,7 @@ func base64Decoder() apis.App {
 		SuccessCode:  200,
 		ResponseType: "application/json",
 		Example:      "",
-		Execute: func(c *fiber.Ctx) error {
+		Handler: func(c *fiber.Ctx) error {
 
 			resp := apis.Response{
 				Status: "error",
@@ -100,7 +100,7 @@ func base64Encoder() apis.App {
 		SuccessCode:  200,
 		ResponseType: "application/json",
 		Example:      "",
-		Execute: func(c *fiber.Ctx) error {
+		Handler: func(c *fiber.Ctx) error {
 
 			resp := apis.Response{
 				Status: apis.ResponseError,
