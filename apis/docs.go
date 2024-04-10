@@ -14,7 +14,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Initialize the application
 func init() {
+	// Define the App struct
 	docs := App{
 		Title:       "Docs API",
 		Category:    "",
@@ -36,21 +38,28 @@ func init() {
 		ResponseType: "text/plain utf-8",
 		Example:      "docs",
 		Handler: func(c *fiber.Ctx) error {
+			// Create a list of apps
 			theapp := []string{}
 			applist := map[string]App{}
 
+			// Get the endpoint from the URL parameters
 			endpoint := "/" + c.Params("*", "")
 
+			// Unescape the endpoint
 			if e, err := url.PathUnescape(endpoint); err == nil {
 				endpoint = e
 			}
 
+			// Check if the app exists in the current list of apps
 			if app, ok := GetApp(endpoint); ok {
+				// If so, add it to the applist
 				applist[app.Path] = app
 			} else {
+				// If not, use the global list of apps
 				applist = apps.Apps
 			}
 
+			// Iterate through the applist and create a string for each app
 			for p, a := range applist {
 				params := []string{}
 				for _, p := range a.Params {
@@ -68,12 +77,14 @@ func init() {
 				)
 			}
 
-			// c.Type("text/html", "utf-8")
+			// Return the list of apps
 			return c.SendString(strings.Join(theapp, "\n"))
 		},
 	}
 
+	// Register the docs app
 	Register(docs)
 	docs.Path = "/docs"
+	// Register the docs app again with the updated path
 	Register(docs)
 }
